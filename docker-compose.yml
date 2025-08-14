@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  planner-api:
+    build:
+      context: .
+      dockerfile: dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    command: uvicorn main:app --reload
+    depends_on:
+      - mongo
+    environment:
+      - PYTHONUNBUFFERED=1
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
