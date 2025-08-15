@@ -1,8 +1,40 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
+from jsonschema import validate, ValidationError
 import json
 import os
+from typing import Dict, Any
 
 router = APIRouter()
+RULESET_FILE = os.path.join(os.path.dirname(__file__), "..", "rulesets", "all_rules.json")
+with open(RULESET_FILE) as f:
+    all_rules = json.load(f)
+
+
+
+@router.post("/validate")
+async def validate_json(payload: Dict[str, Any]):  # Now Swagger shows request body
+    try:
+        payerid = payload["response"][0]["payerid"]
+    except (KeyError, IndexError):
+        raise HTTPException(status_code=400, detail="payerid not found in request")
+
+    schema = all_rules.get(payerid)
+    if not schema:
+        raise HTTPException(status_code=404, detail=f"No ruleset found for payer {payerid}")
+
+    try:
+        validate(instance=payload, schema=schema)
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=f"Validation failed: {e.message}")
+
+    return {"status": "success", "message": "JSON is valid"}
+
+
+
+
+
+
+
 
 @router.get("/patients/{patient_id}")
 async def get_patient_details(patient_id: int, payer_id: int = Query(...)):

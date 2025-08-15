@@ -4,3 +4,8 @@ uvicorn
 httpx
 ## need to connect firebase as db 
 firebase-admin
+motor
+python-dotenv
+pymongo
+motor
+jsonschema
