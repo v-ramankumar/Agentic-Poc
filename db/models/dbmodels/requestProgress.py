@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
+from enum import Enum
 
 class requestStatus(str, Enum):
     """Enumeration for request statuses."""
@@ -17,3 +18,5 @@ class RequestProgress(BaseModel):
     lastUpdatedAt: datetime = Field(..., description="Timestamp when the request was last updated")
     remarks: Optional[str] = Field(None, description="Remarks or comments related to the request")  
     
+    class Config:
+        use_enum_values = True
