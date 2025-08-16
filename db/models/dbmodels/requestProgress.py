@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import datetime
 from enum import Enum
 
-class requestStatus(str, Enum):
+class RequestStatus(str, Enum):
     """Enumeration for request statuses."""
     CREATED = "created"
     VALIDATED = "validated"
@@ -14,7 +14,7 @@ class requestStatus(str, Enum):
 
 class RequestProgress(BaseModel):
     requestId: str = Field(..., description="Unique identifier for the request")
-    status: requestStatus = Field(..., description="Current status of the request")
+    status: RequestStatus = Field(..., description="Current status of the request")
     lastUpdatedAt: datetime = Field(..., description="Timestamp when the request was last updated")
     remarks: Optional[str] = Field(None, description="Remarks or comments related to the request")  
     
