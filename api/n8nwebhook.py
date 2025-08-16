@@ -6,7 +6,7 @@ from httpx import AsyncClient
 from db.config.connection import get_db
 from db.models.dbmodels.requestProgress import RequestStatus
 from db.models.dbmodels.utility.httpResponseEnum import HttpResponseEnum
-from db.models.requestmodels.n8nWebhookRequest import n8nWebhookRequest
+from db.models.requestModels.n8nWebhookRequest import n8nWebhookRequest
 from db.models.responseModels.n8nWorkflowResponse import N8nWorkflowResponse
 
 router = APIRouter()

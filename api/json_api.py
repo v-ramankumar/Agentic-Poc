@@ -5,7 +5,7 @@ import os
 from typing import Dict, Any
 
 from db.config.connection import get_db
-from db.models.requestmodels.validationRequest import ValidationRequest
+from db.models.requestModels.validationRequest import ValidationRequest
 
 router = APIRouter()
 

@@ -6,7 +6,7 @@ from fastapi import APIRouter
 
 from db.models.dbmodels.requestProgress import RequestProgress, RequestStatus
 from db.models.dbmodels.utility.httpResponseEnum import HttpResponseEnum
-from db.models.requestmodels.taskRequest import TaskRequest
+from db.models.requestModels.taskRequest import TaskRequest
 from db.config.connection import get_db
 from db.models.responseModels.ErrorHandler import ErrorHandler
 from db.models.responseModels.taskResponse import  TaskReponse
