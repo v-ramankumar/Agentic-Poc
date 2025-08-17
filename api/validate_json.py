@@ -1,11 +1,14 @@
 import json
 import os
+from datetime import datetime
+
 from jsonschema import validate, ValidationError
 from fastapi import APIRouter, HTTPException
 
-from db.models.requestModels.validationRequest import ValidationRequest
-from db.models.requestModels.jsonValidatorRequest import JsonValidatorRequest
-from db.models.responseModels.validationResponse import ValidationResponse
+from db.config.connection import get_db
+from db.models.dbmodels.requestProgress import RequestStatus
+from db.models.requestmodels.validationRequest import ValidationRequest
+from db.models.requestmodels.jsonValidatorRequest import JsonValidatorRequest
 from db.models.responseModels.jsonValidatorResponse import JsonValidatorResponse
 from db.models.dbmodels.utility.httpResponseEnum import HttpResponseEnum
 
@@ -90,15 +93,34 @@ async def validate_json_payload(req: JsonValidatorRequest):
 
 @router.post("/payers/{payer_id}/validate")
 async def validate_payer(req:ValidationRequest):
-    """
-    Endpoint to validate payer information.
-    """
-    # Here you would implement the logic to validate the payer information
-    # For now, we will just return a placeholder response
-    return {
-        "status": "success",
-        "message": "Payer validation request received",
-        "payer_id": req.payer_id,
-        "request_id": req.request_id
-    }
 
+    db = get_db()
+    try:
+
+        payer = await db.collections("priorAuthPayers").find_one({"id": req.payer_id})
+        if payer:
+            await db.collection("requestProgress").update_one(
+                {"requestId": req.request_id},
+                {
+                    "$set": {
+                        "status": RequestStatus.VALIDATED,
+                        "lastUpdatedAt": datetime.now(),
+                        "remarks": "Payer info reterived successfully"
+                    }
+                }
+            )
+            return {"status": HttpResponseEnum.OK, "message": "Payer validated successfully"}
+        else:
+            return {"status": HttpResponseEnum.NOT_FOUND, "message": "Payer not found"}
+    except Exception as e:
+        await db.collection("requestProgress").update_one(
+            {"requestId": req.request_id},
+            {
+                "$set": {
+                    "status": RequestStatus.FAILED,
+                    "lastUpdatedAt": datetime.now(),
+                    "remarks": str(e)
+                }
+            }
+        )
+        return {"status": HttpResponseEnum.INTERNAL_SERVER_ERROR, "message": str(e)}

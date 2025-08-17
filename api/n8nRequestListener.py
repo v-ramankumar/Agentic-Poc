@@ -2,7 +2,7 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException
 
 from db.config.connection import get_db
-from db.models.requestModels.n8nRequestListener import N8nRequestListener
+from  db.models.requestmodels.n8nRequestListener import N8nRequestListener
 from db.models.dbmodels.requestProgress import RequestStatus
 from db.models.dbmodels.utility.httpResponseEnum import HttpResponseEnum
 from db.models.responseModels.n8nWorkflowResponse import N8nWorkflowResponse

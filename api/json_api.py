@@ -2,10 +2,7 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from jsonschema import validate, ValidationError
 import json
 import os
-from typing import Dict, Any
 
-from db.config.connection import get_db
-from db.models.requestModels.validationRequest import ValidationRequest
 
 router = APIRouter()
 
