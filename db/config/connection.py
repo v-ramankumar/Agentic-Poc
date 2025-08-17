@@ -8,7 +8,7 @@ load_dotenv()
 
 # MongoDB settings from .env
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "browser_agent")
+MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "preauth_agent_db")
 
 client: Optional[AsyncIOMotorClient] = None
 db: Optional[AsyncIOMotorDatabase] = None

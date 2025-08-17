@@ -7,8 +7,11 @@ class RequestStatus(str, Enum):
     """Enumeration for request statuses."""
     CREATED = "created"
     VALIDATED = "validated"
+    PROCESSING = "processing"
     IN_PROGRESS = "in_progress"
     ACTION_NEEDED = "action_needed"
+    USER_ACTION_REQUIRED = "user_action_required"
+    COMPLETED = "completed"
     SUCCEEDED = "succeeded"
     FAILED = "failed"
 
@@ -19,4 +22,8 @@ class RequestProgress(BaseModel):
     remarks: Optional[str] = Field(None, description="Remarks or comments related to the request")  
     
     class Config:
-        use_enum_values = True
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {
+            datetime: lambda dt: dt.isoformat()
+        }

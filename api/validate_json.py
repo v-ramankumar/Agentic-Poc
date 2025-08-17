@@ -99,7 +99,7 @@ async def validate_payer(req:ValidationRequest):
 
         payer = await db.collections("priorAuthPayers").find_one({"id": req.payer_id})
         if payer:
-            await db.collection("requestProgress").update_one(
+            await db["requestProgress"].update_one(
                 {"requestId": req.request_id},
                 {
                     "$set": {
@@ -113,7 +113,7 @@ async def validate_payer(req:ValidationRequest):
         else:
             return {"status": HttpResponseEnum.NOT_FOUND, "message": "Payer not found"}
     except Exception as e:
-        await db.collection("requestProgress").update_one(
+        await db["requestProgress"].update_one(
             {"requestId": req.request_id},
             {
                 "$set": {
