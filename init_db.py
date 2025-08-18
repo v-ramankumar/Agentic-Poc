@@ -13,7 +13,7 @@ async def init_sample_data():
     print("🔄 Connecting to MongoDB...")
     
     # Connect to MongoDB
-    client = AsyncIOMotorClient("mongodb://localhost:27017")
+    client = AsyncIOMotorClient("mongodb://localhost:27000")
     db = client["preauth_agent_db"]
     
     try:

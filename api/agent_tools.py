@@ -51,7 +51,8 @@ async def start_new_request(req: StartRequestTool):
         )
         db = get_db()
         
-        await db["requestProgress"].insert_one(request_progress.model_dump(by_alias=True))
+        res = await db["requestProgress"].insert_one(request_progress.model_dump(by_alias=True))
+        print(res)
         return StartRequestResponse(
             request_id=request_id,
             status="CREATED",
@@ -95,6 +96,10 @@ async def check_payer_onboarding(payer_id: str, request_id: str = Query(...)):
         payer = await db["priorAuthPayers"].find_one({"id": payer_id})
         
         if payer:
+            # Convert ObjectId to string for JSON serialization
+            if "_id" in payer:
+                payer["_id"] = str(payer["_id"])
+                
             await db["requestProgress"].update_one(
                 {"requestId": request_id},
                 {

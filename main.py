@@ -6,6 +6,7 @@ from api.n8n_callback_api import router as n8n_callback_router
 from api.dashboard_api import router as dashboard_router
 from api.agent_tools import router as agent_tools_router
 from db.config.connection import init_db
+import os
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -56,5 +57,14 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    
+    # Enable reload in development
+    debug_mode = os.getenv("DEBUG", "False").lower() == "true"
+    
+    uvicorn.run(
+        "main:app",  # Use string import for reload to work
+        host="0.0.0.0", 
+        port=8001,
+        reload=debug_mode,  # Enable auto-reload in debug mode
+        reload_dirs=["./"] if debug_mode else None  # Watch current directory
+    )

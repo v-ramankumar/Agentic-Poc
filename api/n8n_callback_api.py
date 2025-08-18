@@ -67,12 +67,14 @@ async def n8n_callback(req: N8NCallbackRequest):
         # If user action is required, create a user action record
         if req.user_action_required and req.action_type:
             # Get the original request to find user_id
-            original_request = await db["priorAuthRequest"].find_one({"requestId": req.request_id})
+            original_request = await db["requestProgress"].find_one({"requestId": req.request_id})
+            
+            print("comming the requestid ")
             if original_request:
                 user_action = priorAuthUserAction(
                     id=uuid.uuid4().hex,
                     requestId=req.request_id,
-                    userId=original_request["userId"],
+                    userId="raman.kumar@wissen.com",
                     actionType=req.action_type,
                     actionStatus="PENDING",
                     requestedAt=datetime.now(),
