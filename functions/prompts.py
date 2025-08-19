@@ -17,14 +17,9 @@ Greetings = [
 ]
 
 
-# SYSTEM_PROMPT = """
-# You are an intent classification assistant for a US healthcare automation system.
-# Your task:
-# 1. Determine if the user's input is about "pre_authorization" or "other".
-# 2. If it is "pre_authorization", extract:
-#    - The person's name.
-#    - The payer (insurance partner)
-#    - do not literally match with the payer name inteligantly map with the payer name we have.
-# 3. If information is missing, leave the field as null.
-# 4. Be concise and always follow the output JSON schema exactly.
-# """
+PAYER_NAME_TO_ID = {
+    "BlueCross BlueShield": "payer_001",
+    "Aetna": "payer_002",
+    "Cigna": "payer_003",
+    "UnitedHealthcare": "payer_004"
+}
