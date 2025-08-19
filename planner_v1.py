@@ -39,4 +39,4 @@ async def detect_intent(user_input: UserInput):
             Intent=Intent
         )
     elif Intent == "pre_authorization":
-        return handle_pre_authorization(Intent, patient_id, payer) #, parsed.is_valid_payer)
+        return handle_pre_authorization(Intent, patient_id, payer)
