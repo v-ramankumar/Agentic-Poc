@@ -16,6 +16,7 @@ class PurposeClass(BaseModel):
 
 class UserInput(BaseModel):
     query: str
+    user_id: str
 
 class ResponseModel(BaseModel):
     status: Literal["success", "error", "incomplete"]

@@ -1,6 +1,7 @@
 from functions.table_files import PAYERS
 from functions.schema import ResponseModel
 from functions.table_files import pre_auth_req_data
+import httpx
 
 # ---------- PLACEHOLDER FUNCTION ----------
 def pre_authorization_workflow(patient_id: str, payer: str):
@@ -15,10 +16,29 @@ def get_payer_details(payer_name: str) -> dict | None:
             return payer
     return None
 
-def enrich_pre_authorization_response(patient_id: str, payer: str) -> dict:
+# def trigger_n8n(patient_id: str, payer: str) -> dict:
+#     """
+#     Calls the pre_authorization_workflow() API and enriches its response 
+#     with payer details from get_payer_details().
+#     """
+#     # Step 1: Call workflow API
+#     workflow_data = pre_authorization_workflow(patient_id, payer)
+
+#     # Step 2: Fetch payer details
+#     payer_details = get_payer_details(payer)
+
+#     # Step 3: Enrich response
+#     enriched_response = {
+#         "payer_details": payer_details,
+#         "workflow_data": workflow_data
+#     }
+#     return enriched_response
+
+
+def trigger_n8n(patient_id: str, payer: str) -> dict:
     """
-    Calls the pre_authorization_workflow() API and enriches its response 
-    with payer details from get_payer_details().
+    Calls pre_authorization_workflow(), enriches with payer details,
+    then calls the /tools/trigger-n8n API (running on 8001) to trigger N8N.
     """
     # Step 1: Call workflow API
     workflow_data = pre_authorization_workflow(patient_id, payer)
@@ -26,8 +46,33 @@ def enrich_pre_authorization_response(patient_id: str, payer: str) -> dict:
     # Step 2: Fetch payer details
     payer_details = get_payer_details(payer)
 
-    # Step 3: Enrich response
+    # Step 3: Prepare payload for /tools/trigger-n8n
+    n8n_payload = {
+        "request_id": "hfjhjh",
+        "user_id": "system-user",  # <-- replace with actual user if available
+        "patient_id": patient_id,
+        "patient_name": "hvhvhvh",
+        "payer_id": str(payer_details["payer_id"]),
+        "prompt": "Pre-authorization request",  # or pass actual prompt
+        "validated_json": workflow_data
+    }
+
+    # Step 4: Call the APIs service at port 8001
+    try:
+        with httpx.Client() as client:
+            response = client.post(
+                "http://127.0.0.1:8001/api/tools/trigger-n8n",
+                json=n8n_payload,
+                timeout=30.0
+            )
+            response.raise_for_status()
+            n8n_response = response.json()
+    except Exception as e:
+        n8n_response = {"error": f"Failed to trigger N8N API: {str(e)}"}
+
+    # Step 5: Combine and return enriched response
     enriched_response = {
+        "n8n_response": n8n_response,
         "payer_details": payer_details,
         "workflow_data": workflow_data
     }
@@ -68,7 +113,7 @@ def handle_pre_authorization(Intent: str, patient_id: str, payer: str) -> Respon
         )
 
     # Case 4: All details present
-    workflow_data = enrich_pre_authorization_response(patient_id, payer)
+    workflow_data = trigger_n8n(patient_id, payer)
     return ResponseModel(
         status="success",
         message="Thank you for the details, pre-authorization successfully proceeded.",
